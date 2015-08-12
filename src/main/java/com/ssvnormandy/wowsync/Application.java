@@ -24,6 +24,10 @@ public class Application {
         }
 
         LinkCreator lc = new LinkCreator();
+        lc.createLinks(Paths.get(arguments.syncDir.toString(), "AddOns").toFile(),
+                Paths.get(arguments.wowDir.toString(), "Interface", "AddOns").toFile());
+
+        // This creates links for Addon data
         lc.createLinks(Paths.get(arguments.syncDir.toString(), "SavedVariables").toFile(),
                 Paths.get(arguments.wowDir.toString(), "WTF", "Account", arguments.accountName, "SavedVariables").toFile());
     }

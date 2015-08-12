@@ -15,7 +15,7 @@ public class LinkCreator {
             throw new IllegalArgumentException("src is not a directory.");
         }
         if (dest == null) {
-            throw new IllegalArgumentException("dest cannot be null or not writeable.");
+            throw new IllegalArgumentException("dest cannot be null.");
         } else if (!dest.exists()) {
             try {
                 Files.createDirectories(dest.toPath());
@@ -27,7 +27,7 @@ public class LinkCreator {
         cleanupBadSymbolicLinks(dest);
 
         Path link, source;
-        for (File file : src.listFiles(p -> p.isFile() && p.getName().endsWith("lua"))) {
+        for (File file : src.listFiles(p -> !p.getName().startsWith("."))) {
             link = Paths.get(dest.toPath().toString(), file.getName());
             source = file.toPath();
             if (Files.isSymbolicLink(link)) {
@@ -50,7 +50,7 @@ public class LinkCreator {
 
     private void cleanupBadSymbolicLinks(File loc) {
         for (File file : loc.listFiles(pathname -> Files.isSymbolicLink(pathname.toPath()) && Files.notExists(pathname.toPath()))) {
-            System.out.printf("Deleting a symlink (%s) that no longer exists.", file);
+            System.out.printf("Deleting a symlink (%s) that no longer exists.\n", file);
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
