@@ -12,10 +12,10 @@ import java.nio.file.Paths;
  */
 public class Application {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Arguments arguments = new Arguments();
         CmdLineParser cmdLineParser = new CmdLineParser(arguments);
-        try{
+        try {
             cmdLineParser.parseArgument(args);
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
@@ -32,21 +32,22 @@ public class Application {
 
         public Arguments() {
             String baseWow;
-            if(System.getProperty("os.name").startsWith("Windows")) {
+            if (System.getProperty("os.name").startsWith("Windows")) {
                 baseWow = System.getenv("ProgramFiles(X86)");
-            }
-            else {
+            } else {
                 baseWow = "/Applications/";
             }
             syncDir = Paths.get(System.getProperty("user.home"), "Dropbox", "Game Data", "World of Warcraft").toFile();
             wowDir = Paths.get(baseWow, "World of Warcraft").toFile();
 
+            File[] accounts = Paths.get(wowDir.toString(), "WTF", "Account").toFile().listFiles(p -> !p.isHidden());
+            accountName = accounts == null ? null : accounts[0].getName();
         }
 
-        @Option(name="-s", aliases = {"--sync-dir"}, usage = "Sets the folder that is synced to your cloud storage.")
+        @Option(name = "-s", aliases = {"--sync-dir"}, usage = "Sets the folder that is synced to your cloud storage.")
         public File syncDir;
 
-        @Option(name="-w", aliases = {"--wow-dir"}, usage = "Sets the install location of your World of Warcraft Client.")
+        @Option(name = "-w", aliases = {"--wow-dir"}, usage = "Sets the install location of your World of Warcraft Client.")
         public File wowDir;
 
         @Option(name = "-n", aliases = {"--name"}, usage = "The account name that you want to sync.")
