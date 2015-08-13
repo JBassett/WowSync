@@ -27,7 +27,7 @@ public class LinkCreator {
         cleanupBadSymbolicLinks(dest);
 
         Path link, source;
-        for (File file : src.listFiles(p -> !p.getName().startsWith("."))) {
+        for (File file : src.listFiles(p -> !(p.getName().startsWith(".") || p.getName().endsWith(".bak")))) {
             link = Paths.get(dest.toPath().toString(), file.getName());
             source = file.toPath();
             if (Files.isSymbolicLink(link)) {
