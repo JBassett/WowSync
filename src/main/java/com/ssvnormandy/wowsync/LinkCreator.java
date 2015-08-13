@@ -10,7 +10,7 @@ import java.nio.file.Paths;
  * Created by jbassett on 8/12/15.
  */
 public class LinkCreator {
-    public void createLinks(File src, File dest) {
+    public void createLinks(File src, File dest, boolean forceOverride) {
         if (src == null || !src.isDirectory()) {
             throw new IllegalArgumentException("src is not a directory.");
         }
@@ -31,16 +31,27 @@ public class LinkCreator {
             link = Paths.get(dest.toPath().toString(), file.getName());
             source = file.toPath();
             if (Files.isSymbolicLink(link)) {
-                System.out.printf("File (%s) is already symbolic link, not doing anything.\n", link);
+                System.out.printf("File (%s) is already symbolic link, not doing anything.\n", file.getName());
                 continue;
             }
             if (Files.exists(link)) {
-                System.out.printf("File (%s) is already in your folder, not doing anything.\n", link);
-                continue;
+                if (forceOverride) {
+                    System.out.printf("File (%s) is already in your folder, deleting and creating symlink.\n", file.getName());
+                    try {
+                        Files.delete(link);
+                    } catch (IOException e) {
+                        System.err.println("Couldn't delete the actual file, skipping!");
+                        e.printStackTrace();
+                        continue;
+                    }
+                } else {
+                    System.out.printf("File (%s) is already in your folder, not doing anything.\n", file.getName());
+                    continue;
+                }
             }
-            System.out.printf("Attempting to link source file (%s) to destination link (%s)\n", source, link);
             try {
                 Files.createSymbolicLink(link, source);
+                System.out.printf("Successfully linked file (%s)\n", file.getName());
             } catch (IOException e) {
                 System.err.println("Issue linking!");
                 e.printStackTrace();

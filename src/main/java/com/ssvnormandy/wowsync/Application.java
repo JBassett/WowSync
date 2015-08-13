@@ -22,14 +22,17 @@ public class Application {
             cmdLineParser.printUsage(System.err);
             System.exit(-1);
         }
+        System.out.printf("Sync Dir: %s\nWow Dir: %s\nAccount Name: %s", arguments.syncDir, arguments.wowDir, arguments.accountName);
 
         LinkCreator lc = new LinkCreator();
         lc.createLinks(Paths.get(arguments.syncDir.toString(), "AddOns").toFile(),
-                Paths.get(arguments.wowDir.toString(), "Interface", "AddOns").toFile());
+                Paths.get(arguments.wowDir.toString(), "Interface", "AddOns").toFile(),
+                arguments.forceOverride);
 
         // This creates links for Addon data
         lc.createLinks(Paths.get(arguments.syncDir.toString(), "SavedVariables").toFile(),
-                Paths.get(arguments.wowDir.toString(), "WTF", "Account", arguments.accountName, "SavedVariables").toFile());
+                Paths.get(arguments.wowDir.toString(), "WTF", "Account", arguments.accountName, "SavedVariables").toFile(),
+                arguments.forceOverride);
     }
 
     static class Arguments {
@@ -56,5 +59,8 @@ public class Application {
 
         @Option(name = "-n", aliases = {"--name"}, usage = "The account name that you want to sync.")
         public String accountName;
+
+        @Option(name = "-f", aliases = {"--force"}, usage = "Forces symlinks to be created even if the file already exists.")
+        public boolean forceOverride;
     }
 }
